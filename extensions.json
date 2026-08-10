@@ -1,0 +1,339 @@
+{
+  "schemaVersion": 1,
+  "description": "Portable VS Code extension set. Contains extension IDs and versions only; no workstation-specific paths or personal data.",
+  "installDefault": "latest",
+  "extensions": [
+    {
+      "id": "aaron-wang.php-debug-manager",
+      "version": "2.0.0"
+    },
+    {
+      "id": "adam-bender.commit-message-editor",
+      "version": "0.25.0"
+    },
+    {
+      "id": "alefragnani.bookmarks",
+      "version": "14.1.1"
+    },
+    {
+      "id": "alefragnani.pascal",
+      "version": "10.0.0"
+    },
+    {
+      "id": "alefragnani.pascal-formatter",
+      "version": "2.10.0"
+    },
+    {
+      "id": "atommaterial.a-file-icon-vscode",
+      "version": "2.0.1"
+    },
+    {
+      "id": "bbenoist.shell",
+      "version": "0.3.0"
+    },
+    {
+      "id": "bdq460.shell-formatter",
+      "version": "1.0.5"
+    },
+    {
+      "id": "bmalehorn.shell-syntax",
+      "version": "1.0.5"
+    },
+    {
+      "id": "bmewburn.vscode-intelephense-client",
+      "version": "1.18.5"
+    },
+    {
+      "id": "bradlc.vscode-tailwindcss",
+      "version": "0.16.0"
+    },
+    {
+      "id": "brpaz.contextual-snips",
+      "version": "1.3.1"
+    },
+    {
+      "id": "calebporzio.better-phpunit",
+      "version": "1.6.2"
+    },
+    {
+      "id": "davidanson.vscode-markdownlint",
+      "version": "0.62.1"
+    },
+    {
+      "id": "deepinthought.vscode-shell-snippets",
+      "version": "0.3.1"
+    },
+    {
+      "id": "devsense.composer-php-vscode",
+      "version": "1.72.19127"
+    },
+    {
+      "id": "devsense.intelli-php-vscode",
+      "version": "0.12.17700"
+    },
+    {
+      "id": "devsense.phptools-vscode",
+      "version": "1.72.19127"
+    },
+    {
+      "id": "devsense.profiler-php-vscode",
+      "version": "1.72.19127"
+    },
+    {
+      "id": "donjayamanne.githistory",
+      "version": "0.6.20"
+    },
+    {
+      "id": "dotjoshjohnson.xml",
+      "version": "2.5.1"
+    },
+    {
+      "id": "dracula-theme.theme-dracula",
+      "version": "2.25.1"
+    },
+    {
+      "id": "eamodio.gitlens",
+      "version": "18.3.0"
+    },
+    {
+      "id": "ecmel.vscode-html-css",
+      "version": "2.0.14"
+    },
+    {
+      "id": "editorconfig.editorconfig",
+      "version": "0.18.2"
+    },
+    {
+      "id": "exiasr.hadolint",
+      "version": "1.1.2"
+    },
+    {
+      "id": "formulahendry.auto-close-tag",
+      "version": "0.5.15"
+    },
+    {
+      "id": "formulahendry.auto-rename-tag",
+      "version": "0.1.10"
+    },
+    {
+      "id": "formulahendry.code-runner",
+      "version": "0.12.2"
+    },
+    {
+      "id": "foxundermoon.shell-format",
+      "version": "7.2.8"
+    },
+    {
+      "id": "github.codespaces",
+      "version": "1.18.15"
+    },
+    {
+      "id": "github.remotehub",
+      "version": "0.64.0"
+    },
+    {
+      "id": "github.vscode-pull-request-github",
+      "version": "0.162.0"
+    },
+    {
+      "id": "howardzuo.vscode-git-tags",
+      "version": "1.4.4"
+    },
+    {
+      "id": "ithit.webdavdotnet",
+      "version": "15.5.16162"
+    },
+    {
+      "id": "jeff-hykin.better-dockerfile-syntax",
+      "version": "1.0.2"
+    },
+    {
+      "id": "jeff-hykin.better-shellscript-syntax",
+      "version": "1.10.0"
+    },
+    {
+      "id": "jkjustjoshing.vscode-text-pastry",
+      "version": "1.3.1"
+    },
+    {
+      "id": "kakumei.php-xdebug",
+      "version": "0.0.7"
+    },
+    {
+      "id": "kamikillerto.vscode-colorize",
+      "version": "0.17.1"
+    },
+    {
+      "id": "kasik96.latte",
+      "version": "0.18.2"
+    },
+    {
+      "id": "mads-hartmann.bash-ide-vscode",
+      "version": "1.43.0"
+    },
+    {
+      "id": "martinvz.better-php-error-logger",
+      "version": "0.1.38"
+    },
+    {
+      "id": "mechatroner.rainbow-csv",
+      "version": "3.24.1"
+    },
+    {
+      "id": "meronz.manpages",
+      "version": "0.2.0"
+    },
+    {
+      "id": "mhutchie.git-graph",
+      "version": "1.30.0"
+    },
+    {
+      "id": "mikestead.dotenv",
+      "version": "1.0.1"
+    },
+    {
+      "id": "ms-dotnettools.csdevkit",
+      "version": "3.20.199"
+    },
+    {
+      "id": "ms-dotnettools.csharp",
+      "version": "2.140.9"
+    },
+    {
+      "id": "ms-dotnettools.vscode-dotnet-runtime",
+      "version": "3.1.0"
+    },
+    {
+      "id": "ms-edgedevtools.vscode-edge-devtools",
+      "version": "2.1.10"
+    },
+    {
+      "id": "ms-python.debugpy",
+      "version": "2026.6.0"
+    },
+    {
+      "id": "ms-python.python",
+      "version": "2026.4.0"
+    },
+    {
+      "id": "ms-python.vscode-pylance",
+      "version": "2026.3.1"
+    },
+    {
+      "id": "ms-python.vscode-python-envs",
+      "version": "1.36.0"
+    },
+    {
+      "id": "ms-vscode.azure-repos",
+      "version": "0.40.0"
+    },
+    {
+      "id": "ms-vscode.powershell",
+      "version": "2025.4.0"
+    },
+    {
+      "id": "ms-vscode.remote-repositories",
+      "version": "0.42.0"
+    },
+    {
+      "id": "open-southeners.laravel-pint",
+      "version": "2.1.0"
+    },
+    {
+      "id": "open-southeners.php-support-utils",
+      "version": "1.2.0"
+    },
+    {
+      "id": "open-southeners.vscode-php-extension-pack",
+      "version": "2.0.0"
+    },
+    {
+      "id": "openai.chatgpt",
+      "version": "26.803.41515"
+    },
+    {
+      "id": "prabothcharith.web-starter-extension-pack",
+      "version": "1.0.1"
+    },
+    {
+      "id": "redhat.vscode-xml",
+      "version": "0.29.3"
+    },
+    {
+      "id": "remcoros.startanyshell",
+      "version": "0.3.1"
+    },
+    {
+      "id": "remisa.shellman",
+      "version": "5.7.0"
+    },
+    {
+      "id": "ritwickdey.liveserver",
+      "version": "5.7.10"
+    },
+    {
+      "id": "robberphex.php-debug",
+      "version": "1.14.0"
+    },
+    {
+      "id": "rogalmic.bash-debug",
+      "version": "0.3.9"
+    },
+    {
+      "id": "ryu1kn.edit-with-shell",
+      "version": "1.3.0"
+    },
+    {
+      "id": "sh17ck.vscode-xsd-treeview",
+      "version": "0.0.6"
+    },
+    {
+      "id": "tetradresearch.vscode-h2o",
+      "version": "0.2.15"
+    },
+    {
+      "id": "tiansin.php-debug",
+      "version": "0.1.6"
+    },
+    {
+      "id": "timonwong.shellcheck",
+      "version": "0.39.5"
+    },
+    {
+      "id": "vinirossa.vscode-gitandgithub-pack",
+      "version": "2.0.1"
+    },
+    {
+      "id": "vscode-icons-team.vscode-icons",
+      "version": "12.19.0"
+    },
+    {
+      "id": "wayou.vscode-todo-highlight",
+      "version": "1.0.5"
+    },
+    {
+      "id": "woozy-masta.shell-script-ide",
+      "version": "0.0.3"
+    },
+    {
+      "id": "xdebug.php-debug",
+      "version": "1.40.1"
+    },
+    {
+      "id": "xshrim.txt-syntax",
+      "version": "0.2.4"
+    },
+    {
+      "id": "yzhang.markdown-all-in-one",
+      "version": "3.6.3"
+    },
+    {
+      "id": "zignd.html-css-class-completion",
+      "version": "1.20.0"
+    },
+    {
+      "id": "ziyasal.vscode-open-in-github",
+      "version": "1.3.6"
+    }
+  ]
+}
