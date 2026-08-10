@@ -1,0 +1,22 @@
+{
+  "name": "my-tools",
+  "displayName": "My Local Tools",
+  "description": "Minimal VS Code extension example",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.89.0"
+  },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onCommand:myTools.showProjectInfo"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "myTools.showProjectInfo",
+        "title": "My Tools: Show Project Info"
+      }
+    ]
+  }
+}
