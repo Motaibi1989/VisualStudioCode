@@ -1,31 +1,199 @@
-# Visual Studio Code Extensions Reference
+# Visual Studio Code Extensions Toolkit
 
-A practical reference for **Visual Studio Code extension installation, management, local storage, VSIX packages, Extension API development, security, and troubleshooting**.
+A practical, privacy-safe reference and automation toolkit for **Visual Studio Code extension installation, backup, restore, inventory, local storage, VSIX packages, Extension API development, security, and troubleshooting**.
 
-This repository combines official VS Code guidance with generic, reusable examples and PowerShell commands. Examples intentionally avoid personal usernames, employee IDs, workstation names, and other identifying data.
+The repository includes a portable JSON inventory of the extension set plus matching **PowerShell** and **Bash** tools. No real Windows username, employee ID, workstation path, hostname, internal IP, token, or other machine-specific personal data is stored in the portable inventory.
 
-## Contents
+## Repository layout
 
-1. [Extension locations](#extension-locations)
-2. [What is inside the extensions folder](#what-is-inside-the-extensions-folder)
-3. [List installed extensions](#list-installed-extensions)
-4. [Install and uninstall extensions](#install-and-uninstall-extensions)
-5. [VSIX offline installation](#vsix-offline-installation)
-6. [Extension management in VS Code](#extension-management-in-vs-code)
-7. [Changing the extensions directory](#changing-the-extensions-directory)
-8. [Extension anatomy](#extension-anatomy)
-9. [Extension API capabilities](#extension-api-capabilities)
-10. [Local extension development](#local-extension-development)
-11. [PowerShell inventory](#powershell-inventory)
-12. [Security](#security)
-13. [Troubleshooting](#troubleshooting)
-14. [References](#references)
+```text
+VisualStudioCode/
+├── README.md
+├── extensions.json
+├── scripts/
+│   ├── Get-VSCodeExtensions.ps1
+│   ├── get-vscode-extensions.sh
+│   ├── Export-VSCodeExtensions.ps1
+│   ├── export-vscode-extensions.sh
+│   ├── Install-VSCodeExtensions.ps1
+│   └── install-vscode-extensions.sh
+└── examples/
+    └── minimal-extension/
+        ├── package.json
+        └── extension.js
+```
+
+## Portable extension inventory
+
+`extensions.json` contains **83 extension IDs and their recorded versions**.
+
+It intentionally keeps only portable information:
+
+```json
+{
+  "schemaVersion": 1,
+  "installDefault": "latest",
+  "extensions": [
+    {
+      "id": "publisher.extension",
+      "version": "1.0.0"
+    }
+  ]
+}
+```
+
+The raw VS Code `extensions.json` from a workstation should **not** be committed because it can contain local filesystem paths, UUIDs, installation timestamps, and other machine-specific metadata.
 
 ---
 
-## Extension locations
+# Install the complete extension set
 
-VS Code installs user extensions in a per-user extensions directory.
+## Windows - PowerShell
+
+Clone the repository:
+
+```powershell
+git clone https://github.com/Motaibi1989/VisualStudioCode.git
+cd VisualStudioCode
+.\scripts\Install-VSCodeExtensions.ps1
+```
+
+The default mode installs the latest Marketplace version and skips extensions already installed.
+
+Install the recorded versions instead:
+
+```powershell
+.\scripts\Install-VSCodeExtensions.ps1 -Pinned
+```
+
+Force reinstall/check every extension:
+
+```powershell
+.\scripts\Install-VSCodeExtensions.ps1 -Force
+```
+
+## Windows - install from anywhere without cloning
+
+```powershell
+$base = "https://raw.githubusercontent.com/Motaibi1989/VisualStudioCode/main"
+$temp = Join-Path $env:TEMP "vscode-extension-toolkit"
+
+New-Item -ItemType Directory -Force -Path $temp | Out-Null
+
+Invoke-WebRequest "$base/extensions.json" `
+    -OutFile "$temp/extensions.json"
+
+Invoke-WebRequest "$base/scripts/Install-VSCodeExtensions.ps1" `
+    -OutFile "$temp/Install-VSCodeExtensions.ps1"
+
+& "$temp/Install-VSCodeExtensions.ps1" `
+    -Config "$temp/extensions.json"
+```
+
+## Linux / macOS - Bash
+
+```bash
+git clone https://github.com/Motaibi1989/VisualStudioCode.git
+cd VisualStudioCode
+bash scripts/install-vscode-extensions.sh
+```
+
+Install the recorded versions:
+
+```bash
+bash scripts/install-vscode-extensions.sh extensions.json pinned
+```
+
+## Linux / macOS - install from anywhere without cloning
+
+```bash
+BASE="https://raw.githubusercontent.com/Motaibi1989/VisualStudioCode/main"
+TMP="$(mktemp -d)"
+
+curl -fsSL "$BASE/extensions.json" \
+  -o "$TMP/extensions.json"
+
+curl -fsSL "$BASE/scripts/install-vscode-extensions.sh" \
+  -o "$TMP/install-vscode-extensions.sh"
+
+bash "$TMP/install-vscode-extensions.sh" "$TMP/extensions.json"
+```
+
+The Bash installer requires `python3` to parse JSON.
+
+---
+
+# Export your current extension set
+
+Use these scripts after adding or removing extensions so `extensions.json` can be refreshed without exposing personal paths.
+
+## PowerShell
+
+```powershell
+.\scripts\Export-VSCodeExtensions.ps1
+```
+
+Custom output file:
+
+```powershell
+.\scripts\Export-VSCodeExtensions.ps1 -Output .\my-extensions.json
+```
+
+## Bash
+
+```bash
+bash scripts/export-vscode-extensions.sh
+```
+
+Custom output file:
+
+```bash
+bash scripts/export-vscode-extensions.sh ./my-extensions.json
+```
+
+Both exporters use:
+
+```text
+code --list-extensions --show-versions
+```
+
+and create a sanitized portable JSON file containing only extension IDs and versions.
+
+---
+
+# List installed extensions
+
+## VS Code CLI
+
+```bash
+code --list-extensions
+```
+
+With versions:
+
+```bash
+code --list-extensions --show-versions
+```
+
+## PowerShell inventory
+
+```powershell
+.\scripts\Get-VSCodeExtensions.ps1
+```
+
+This inspects extension manifests under the local extension folders and can show fields such as name, ID, version, publisher, entry point, commands, and path.
+
+## Bash inventory
+
+```bash
+bash scripts/get-vscode-extensions.sh
+```
+
+---
+
+# Extension locations
+
+VS Code installs user extensions in a per-user directory.
 
 | Platform | Default path |
 |---|---|
@@ -33,42 +201,35 @@ VS Code installs user extensions in a per-user extensions directory.
 | macOS | `~/.vscode/extensions` |
 | Linux | `~/.vscode/extensions` |
 
-### Windows
+Windows PowerShell:
 
 ```powershell
-cd "$env:USERPROFILE\.vscode\extensions"
-dir
+Set-Location "$env:USERPROFILE\.vscode\extensions"
 ```
 
-Generic expanded form:
+Bash:
+
+```bash
+cd "$HOME/.vscode/extensions"
+```
+
+Generic Windows expanded form:
 
 ```text
 C:\Users\<USERNAME>\.vscode\extensions
 ```
 
-Prefer environment variables in scripts and documentation so no actual account name or identifier is exposed.
-
-Open the directory in Explorer:
-
-```powershell
-explorer "$env:USERPROFILE\.vscode\extensions"
-```
-
-Open it in VS Code:
-
-```powershell
-code "$env:USERPROFILE\.vscode\extensions"
-```
+Never hard-code a real username or employee/account identifier in public documentation.
 
 ---
 
-## What is inside the extensions folder
+# What is inside the extensions folder?
 
 Typical layout:
 
 ```text
-.vscode\extensions\
-├── publisher.extension-name-version\
+.vscode/extensions/
+├── publisher.extension-name-version/
 │   ├── package.json
 │   ├── README.md
 │   ├── CHANGELOG.md
@@ -78,143 +239,74 @@ Typical layout:
 └── extensions.json
 ```
 
-Extension directories commonly follow this pattern:
+`package.json` is the extension manifest and can define:
 
 ```text
-publisher.extension-version
+name
+publisher
+version
+engines.vscode
+main / browser
+activationEvents
+contributes.commands
+contributes.menus
+contributes.views
+contributes.configuration
+contributes.keybindings
+contributes.languages
+contributes.themes
+contributes.debuggers
 ```
 
-Generic examples:
-
-```text
-publisher.language-support-1.0.0
-publisher.formatter-2.1.0
-publisher.debugger-3.0.0-win32-x64
-```
-
-### `extensions.json`
-
-VS Code maintains metadata about installed extensions in `extensions.json`. Depending on the extension, entries can include:
-
-- Extension identifier
-- UUID
-- Version
-- Local installation path
-- Publisher information
-- Installation timestamp
-- Target platform
-- Marketplace/gallery source
-- Update state
-- Pre-release state
-
-> Do not publish a workstation's raw `extensions.json` without reviewing it first. It can contain local paths and other machine-specific metadata.
-
-### `.obsolete`
-
-The `.obsolete` file is used by VS Code during extension update/removal housekeeping. Old extension directories can temporarily remain after an update.
-
-Avoid manually deleting hidden extension-management files while VS Code is running.
+`.obsolete` is used by VS Code during extension update/removal housekeeping. Avoid manually deleting VS Code-managed metadata while the application is running.
 
 ---
 
-## List installed extensions
+# Install and remove individual extensions
 
-### Basic list
+PowerShell or Bash:
 
-```powershell
-code --list-extensions
-```
-
-Generic output:
-
-```text
-publisher.extension-one
-publisher.extension-two
-publisher.extension-three
-```
-
-### Include versions
-
-```powershell
-code --list-extensions --show-versions
-```
-
-Generic output:
-
-```text
-publisher.extension-one@1.0.0
-publisher.extension-two@2.0.0
-```
-
-### Save the inventory
-
-```powershell
-code --list-extensions --show-versions > vscode-extensions.txt
-```
-
-Review generated inventory files before publishing them.
-
----
-
-## Install and uninstall extensions
-
-Install an extension by Marketplace ID:
-
-```powershell
+```bash
 code --install-extension publisher.extension
 ```
 
-Install a specific version when supported:
+Specific version:
 
-```powershell
-code --install-extension publisher.extension@version
+```bash
+code --install-extension publisher.extension@1.0.0
 ```
 
 Uninstall:
 
-```powershell
+```bash
 code --uninstall-extension publisher.extension
 ```
 
 ---
 
-## VSIX offline installation
+# VSIX / offline installation
 
-A VS Code extension can be packaged as a `.vsix` file and installed without using the Marketplace directly.
+Install a local VSIX package:
 
-### Command line
-
-```powershell
+```bash
 code --install-extension myextension.vsix
 ```
 
-### VS Code UI
-
-1. Open **Extensions** with `Ctrl+Shift+X`.
-2. Open the Extensions view menu.
-3. Select **Install from VSIX...**.
-4. Select the `.vsix` file.
-
-VSIX installation is useful for:
-
-- Offline systems
-- Internal extensions
-- Testing development builds
-- Controlled enterprise deployment
-
-> Extensions installed manually from VSIX do not use normal auto-update behavior by default.
-
----
-
-## Extension management in VS Code
-
-Open Extensions:
+Or in VS Code:
 
 ```text
 Ctrl+Shift+X
+Extensions menu
+Install from VSIX...
 ```
 
-Useful filters include:
+VSIX packages are useful for offline machines, internal extensions, development builds, and controlled deployments.
+
+---
+
+# Extension management filters
+
+Useful filters in the Extensions view:
 
 ```text
 @installed
@@ -225,171 +317,49 @@ Useful filters include:
 @recommended
 @updates
 @workspaceUnsupported
-```
-
-Category examples:
-
-```text
 @category:themes
 @category:formatters
 @category:linters
 @category:snippets
 ```
 
-Filters can be combined:
+Example:
 
 ```text
 @installed @category:themes
 ```
 
-Extensions can also be:
-
-- Enabled globally
-- Disabled globally
-- Enabled only for a workspace
-- Disabled only for a workspace
-- Updated
-- Installed at another version
-- Uninstalled
-
-### Settings Sync
-
-VS Code Settings Sync can synchronize extensions and other editor configuration between machines.
-
-Use Settings Sync for normal multi-device extension synchronization instead of manually copying the complete extensions directory.
-
 ---
 
-## Changing the extensions directory
+# Custom extension directory
 
-For special environments, VS Code can use a custom extensions directory.
+VS Code can use another extension folder:
+
+```bash
+code --extensions-dir "/path/to/vscode/extensions"
+```
+
+Windows example using a generic drive:
 
 ```powershell
 code --extensions-dir "D:\VSCode\Extensions"
 ```
 
-This is useful for:
-
-- Portable environments
-- Restricted system disks
-- Testing
-- Separate extension sets
-- Enterprise-managed workstations
-
-Another advanced option is using a Windows directory junction or symbolic link, but this should be treated as an advanced configuration rather than the default synchronization method.
-
-Example concept:
-
-```text
-%USERPROFILE%\.vscode\extensions
-        ↓
-Directory junction / symbolic link
-        ↓
-D:\VSCode\Extensions
-```
-
-Back up the existing directory before changing storage configuration.
+For normal synchronization between computers, Settings Sync or this repository's portable JSON approach is generally cleaner than copying the entire `.vscode/extensions` directory.
 
 ---
 
-## Extension anatomy
+# Minimal extension development
 
-The most important file in most extensions is:
-
-```text
-package.json
-```
-
-It is the extension manifest and can define information such as:
+A minimal extension can contain:
 
 ```text
-Extension
-├── name
-├── displayName
-├── publisher
-├── version
-├── description
-├── engines.vscode
-├── main / browser
-├── activationEvents
-└── contributes
-    ├── commands
-    ├── menus
-    ├── views
-    ├── configuration
-    ├── keybindings
-    ├── languages
-    ├── themes
-    └── debuggers
-```
-
-Example minimal manifest:
-
-```json
-{
-  "name": "my-tools",
-  "displayName": "My Local Tools",
-  "description": "Local VS Code development tools",
-  "version": "1.0.0",
-  "publisher": "local",
-  "engines": {
-    "vscode": "^1.89.0"
-  },
-  "main": "./extension.js",
-  "activationEvents": [
-    "onCommand:myTools.showProjectInfo"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "myTools.showProjectInfo",
-        "title": "My Tools: Show Project Info"
-      }
-    ]
-  }
-}
-```
-
----
-
-## Extension API capabilities
-
-VS Code was designed to be extensible. Extensions can customize much of the editor and workbench.
-
-| Area | API / Capability | Example |
-|---|---|---|
-| Commands | `vscode.commands` | Add custom commands |
-| Editor | `vscode.window.activeTextEditor` | Read or change the active file |
-| Workspace | `vscode.workspace` | Inspect workspace folders/configuration |
-| Files | `vscode.workspace.fs` | Read/write files |
-| Terminal | `vscode.window.createTerminal()` | Launch terminal workflows |
-| Diagnostics | Language diagnostics APIs | Errors and warnings |
-| Status bar | `createStatusBarItem()` | Show project/tool status |
-| Tree views | Tree Data Provider | Custom sidebar views |
-| Webviews | Webview API | HTML/CSS/JS UI |
-| Notifications | Window API | Information/warning/error messages |
-| User input | Quick Pick / Input Box | Interactive tools |
-| Tasks | `vscode.tasks` | Build/deployment tasks |
-| Debugging | Debug API | Debug adapters and workflows |
-| Languages | Language APIs | Completion, hover, formatting |
-| Secrets | `context.secrets` | Secure secret storage |
-| Themes | Contribution points | Color and file icon themes |
-
-Extensions can change themes and icons, add custom views and Webviews, add language/debugging support, contribute commands and menus, and provide linters, formatters, snippets, or SCM integrations.
-
----
-
-## Local extension development
-
-A very small JavaScript extension can be built without a complex build system.
-
-```text
-my-extension\
+my-extension/
 ├── package.json
 └── extension.js
 ```
 
-Example `extension.js`:
+Example JavaScript:
 
 ```javascript
 const vscode = require('vscode');
@@ -405,10 +375,8 @@ function activate(context) {
                 return;
             }
 
-            const document = editor.document;
-
             vscode.window.showInformationMessage(
-                `File: ${document.fileName} | Language: ${document.languageId}`
+                `File: ${editor.document.fileName} | Language: ${editor.document.languageId}`
             );
         }
     );
@@ -421,180 +389,102 @@ function deactivate() {}
 module.exports = { activate, deactivate };
 ```
 
-For larger extensions, TypeScript, tests, linting, packaging, and CI are recommended.
+The repository includes a working minimal example under `examples/minimal-extension/`.
 
 ---
 
-## PowerShell inventory
+# Extension API capabilities
 
-The reusable script in `scripts/Get-VSCodeExtensions.ps1` scans installed VS Code extensions and reads each extension's `package.json`.
-
-Use environment variables rather than hard-coded user directories:
-
-```powershell
-$extensionsPath = Join-Path $env:USERPROFILE ".vscode\extensions"
-```
-
-Useful fields include:
-
-```text
-Name
-ID
-Version
-Publisher
-Description
-VS Code engine
-Entry point
-Commands
-Path
-Product
-```
-
-Before publishing generated reports, sanitize machine-specific paths and metadata.
+| Area | API / capability | Example |
+|---|---|---|
+| Commands | `vscode.commands` | Custom commands |
+| Editor | `vscode.window.activeTextEditor` | Read/change active files |
+| Workspace | `vscode.workspace` | Workspace configuration |
+| Files | `vscode.workspace.fs` | File operations |
+| Terminal | `createTerminal()` | Command workflows |
+| Diagnostics | Language API | Errors/warnings |
+| Status bar | `createStatusBarItem()` | Tool status |
+| Tree views | Tree Data Provider | Custom sidebar |
+| Webviews | Webview API | HTML/CSS/JS UI |
+| Tasks | `vscode.tasks` | Build/deployment tasks |
+| Debugging | Debug API | Debug workflows |
+| Languages | Language APIs | Completion/hover/formatting |
+| Secrets | `context.secrets` | Secure secret storage |
+| Themes | Contribution points | Color/icon themes |
 
 ---
 
-## Security and privacy
+# Security and privacy
 
-VS Code extensions should be treated as executable software.
+Treat extensions as executable software.
 
-Important practices:
-
-- Install extensions only from publishers you trust.
-- Review publisher identity and extension information before installation.
-- Keep extensions updated.
-- Remove extensions you no longer use.
-- Be cautious with extensions that execute shell commands or external programs.
-- Be cautious with extensions that access repositories, credentials, files, terminals, or remote systems.
-- Use Workspace Trust when opening untrusted projects.
-- Prefer Marketplace-signed packages or controlled internal distribution.
-
-### Protect data in public repositories
-
-Do not publish real values such as:
+Do not commit values such as:
 
 ```text
 C:\Users\<REAL_USERNAME>\...
-Employee or account IDs
-Computer/host names
-Internal domains
-Internal IP addresses
-Email addresses
-Access tokens, API keys, passwords, or secrets
-Raw configuration files containing local metadata
+employee/account IDs
+computer names
+internal domains
+internal IP addresses
+email addresses
+access tokens
+API keys
+passwords
+secrets
+raw workstation configuration containing local metadata
 ```
 
-Prefer generic or environment-variable forms:
+Prefer portable forms:
 
 ```text
 %USERPROFILE%\.vscode\extensions
 $env:USERPROFILE\.vscode\extensions
+$HOME/.vscode/extensions
 C:\Users\<USERNAME>\.vscode\extensions
 <HOSTNAME>
-<INTERNAL_DOMAIN>
+<DOMAIN>
 <IP_ADDRESS>
 ```
 
-### Audit ideas
-
-A local extension audit can inspect:
-
-```text
-Extension ID
-Publisher
-Version
-Installation path
-Activation events
-Commands
-Entry point
-Executable files
-Native binaries
-External processes
-Network-related code
-Package dependencies
-Install/update timestamp
-Old duplicate versions
-```
+Before installing an extension, review the publisher and source. Remove unused extensions and keep active extensions updated.
 
 ---
 
-## Troubleshooting
+# Troubleshooting
 
-### Multiple version directories
+Check the active extension set:
 
-After an update, an old version directory may temporarily remain:
-
-```text
-publisher.extension-1.0.0
-publisher.extension-1.1.0
-```
-
-Use the VS Code CLI to determine the active installed version:
-
-```powershell
+```bash
 code --list-extensions --show-versions
 ```
 
-Do not assume every directory under `.vscode\extensions` is currently active.
+If an extension does not load:
 
-### Extension does not load
-
-Check:
-
-1. **View → Output**
-2. Select **Log (Extension Host)** or the relevant extension output channel.
-3. Run `Developer: Show Running Extensions`.
-4. Run `Developer: Reload Window`.
-
-### Inspect an installed extension
-
-```powershell
-$extension = Join-Path $env:USERPROFILE ".vscode\extensions\publisher.extension-version"
-Set-Location $extension
-Get-Content package.json
+```text
+View → Output
+Log (Extension Host)
+Developer: Show Running Extensions
+Developer: Reload Window
 ```
 
-### Clean removal
+Prefer uninstalling through the CLI instead of deleting extension directories manually:
 
-Prefer:
-
-```powershell
+```bash
 code --uninstall-extension publisher.extension
 ```
 
-rather than deleting the extension directory manually.
-
 ---
 
-## Repository structure
-
-```text
-VisualStudioCode/
-├── README.md
-├── scripts/
-│   └── Get-VSCodeExtensions.ps1
-└── examples/
-    └── minimal-extension/
-        ├── package.json
-        └── extension.js
-```
-
----
-
-## References
-
-Official Visual Studio Code documentation:
+# Official references
 
 - Extension Marketplace: https://code.visualstudio.com/docs/configure/extensions/extension-marketplace
 - Extension API: https://code.visualstudio.com/api
 - Extension samples: https://github.com/microsoft/vscode-extension-samples
 - Extension manifest: https://code.visualstudio.com/api/references/extension-manifest
 - Contribution points: https://code.visualstudio.com/api/references/contribution-points
-- VS Code API reference: https://code.visualstudio.com/api/references/vscode-api
+- VS Code API: https://code.visualstudio.com/api/references/vscode-api
 - Extension security: https://code.visualstudio.com/docs/configure/extensions/extension-runtime-security
-
----
 
 ## Goal
 
-This repository provides a practical technical reference for VS Code users, system administrators, extension developers, offline environments, enterprise extension management, troubleshooting, and auditing without exposing workstation-specific personal information.
+Provide a reusable VS Code extension management and development toolkit that works across machines and operating systems while keeping workstation-specific and personal information out of the public repository.
